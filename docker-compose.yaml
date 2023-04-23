@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  openai-token:
+    container_name: openai-token
+    build:
+      context: .
+    ports:
+      - 7555:7555      
+    env_file: .env  
+    restart: unless-stopped
