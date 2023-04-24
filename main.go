@@ -8,16 +8,13 @@ import (
 	"github.com/acheong08/OpenAIAuth/auth"
 )
 
-<<<<<<< HEAD
+
 
 func getToken(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("got /token request\n")
 
-	auth := auth.NewAuthenticator(os.Getenv("OPENAI_EMAIL"), os.Getenv("OPENAI_PASSWORD"), os.Getenv("OPENAI_PUID"), os.Getenv("PROXY"))
-=======
-func main() {
-	auth := auth.NewAuthenticator(os.Getenv("OPENAI_EMAIL"), os.Getenv("OPENAI_PUID"), os.Getenv("PROXY"))
->>>>>>> upstream/main
+	auth := auth.NewAuthenticator(os.Getenv("OPENAI_EMAIL"), os.Getenv("OPENAI_PASSWORD"), os.Getenv("PROXY"))
+
 	err := auth.Begin()
 	if err.Error != nil {
 		println("Error: " + err.Details)
