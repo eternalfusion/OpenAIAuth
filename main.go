@@ -21,6 +21,7 @@ func getToken(w http.ResponseWriter, r *http.Request) {
 		println("Location: " + err.Location)
 		println("Status code: " + fmt.Sprint(err.StatusCode))
 		println("Embedded error: " + err.Error.Error())
+		w.WriteHeader(500)
 		io.WriteString(w, "Error")
 		return
 	}
@@ -30,6 +31,7 @@ func getToken(w http.ResponseWriter, r *http.Request) {
 		println("Location: " + err.Location)
 		println("Status code: " + fmt.Sprint(err.StatusCode))
 		println("Embedded error: " + err.Error.Error())
+		w.WriteHeader(500)
 		io.WriteString(w, "Error")
 		return 
 	}
