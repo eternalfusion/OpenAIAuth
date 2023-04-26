@@ -1,5 +1,5 @@
-# OpenAIAuth
-OpenAI Authentication Library for ChatGPT
+# OpenAIAuth API
+Simple OpenAI Auth API utilizing OpenAIAuth library in Docker
 
 # Credits
 Thank you to:

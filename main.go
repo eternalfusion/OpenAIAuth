@@ -6,39 +6,56 @@ import (
 	"io"
 	"net/http"
 	"github.com/acheong08/OpenAIAuth/auth"
+	"encoding/json"
 )
 
-
+type RequestBody struct {
+    Email string `json:"email"`
+    Password string `json:"password"`
+}
 
 func getToken(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("got /token request\n")
+	if r.Method == "POST" {
+		fmt.Printf("Handle /token request\n")
 
-	auth := auth.NewAuthenticator(os.Getenv("OPENAI_EMAIL"), os.Getenv("OPENAI_PASSWORD"), os.Getenv("PROXY"))
+        var reqBody RequestBody
+        err := json.NewDecoder(r.Body).Decode(&reqBody)
 
-	err := auth.Begin()
-	if err.Error != nil {
-		println("Error: " + err.Details)
-		println("Location: " + err.Location)
-		println("Status code: " + fmt.Sprint(err.StatusCode))
-		println("Embedded error: " + err.Error.Error())
-		w.WriteHeader(500)
-		io.WriteString(w, "Error")
-		return
-	}
-	token, err := auth.GetAccessToken()
-	if err.Error != nil {
-		println("Error: " + err.Details)
-		println("Location: " + err.Location)
-		println("Status code: " + fmt.Sprint(err.StatusCode))
-		println("Embedded error: " + err.Error.Error())
-		w.WriteHeader(500)
-		io.WriteString(w, "Error")
-		return 
-	}
+        if err != nil {
+            http.Error(w, "Error reading request body", http.StatusBadRequest)
+            return
+        }
 
-	fmt.Println("token=" + token)
+        auth := auth.NewAuthenticator(reqBody.Email, reqBody.Password, os.Getenv("PROXY"))
 
-	io.WriteString(w, token)
+		beginErr := auth.Begin()
+		if beginErr.Error != nil {
+			println("Error: " + beginErr.Details)
+			println("Location: " + beginErr.Location)
+			println("Status code: " + fmt.Sprint(beginErr.StatusCode))
+			println("Embedded error: " + beginErr.Error.Error())
+			w.WriteHeader(500)
+			io.WriteString(w, "Error")
+			return
+		}
+		token, tokenErr := auth.GetAccessToken()
+		if tokenErr.Error != nil {
+			println("Error: " + tokenErr.Details)
+			println("Location: " + tokenErr.Location)
+			println("Status code: " + fmt.Sprint(tokenErr.StatusCode))
+			println("Embedded error: " + tokenErr.Error.Error())
+			w.WriteHeader(500)
+			io.WriteString(w, "Error")
+			return 
+		}
+
+		fmt.Println("token=" + token)
+
+		io.WriteString(w, token)
+	} else {
+        http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+        return
+    }	
 }
 
 func main() {
